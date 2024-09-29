@@ -1,43 +1,53 @@
-class Cake:
-    def __init__(self):
-        self.base = ""
-        self.cream = ""
-        self.decoration = ""
-        self.cake_description = []
+class CakeBase:
+    def __init__(self, base_type="스폰지"):
+        self.base = self.prepare_base(base_type)
 
-    def prepare_base(self, base_type="스폰지"):
+    def prepare_base(self, base_type):
         if base_type == "스폰지":
-            self.base = "스폰지 케이크 베이스"
+            return "스폰지 케이크 베이스 준비"
         elif base_type == "초콜릿":
-            self.base = "초콜릿 케이크 베이스"
+            return "초콜릿 케이크 베이스 준비"
         else:
-            self.base = "일반 케이크 베이스"
-        self.cake_description.append(f"{self.base} 준비")
+            return "일반 케이크 베이스 준비"
 
-    def add_cream(self, cream_type="바닐라"):
+class CakeCream:
+    def __init__(self, cream_type="바닐라"):
+        self.cream = self.add_cream(cream_type)
+
+    def add_cream(self, cream_type):
         if cream_type == "바닐라":
-            self.cream = "바닐라 크림"
+            return "바닐라 크림 추가"
         elif cream_type == "초콜릿":
-            self.cream = "초콜릿 크림"
+            return "초콜릿 크림 추가"
         else:
-            self.cream = "일반 크림"
-        self.cake_description.append(f"{self.cream} 추가")
+            return "일반 크림 추가"
+            
+class CakeDecoration:
+    def __init__(self, decoration_type="초콜릿"):
+        self.decoration = self.apply_decoration(decoration_type)
 
-    def decorate(self, decoration_type="초콜릿"):
+    def apply_decoration(self, decoration_type):
         if decoration_type == "초콜릿":
-            self.decoration = "초콜릿 장식"
+            return "초콜릿 장식 추가"
         elif decoration_type == "과일":
-            self.decoration = "과일 장식"
+            return "과일 장식 추가"
         else:
-            self.decoration = "일반 장식"
-        self.cake_description.append(f"{self.decoration} 추가")
+            return "일반 장식 추가"
 
-    def make_cake(self, base_type="스폰지", cream_type="바닐라", decoration_type="초콜릿"):
-        self.prepare_base(base_type)
-        self.add_cream(cream_type)
-        self.decorate(decoration_type)
-        self.cake_description.append("케이크가 완성되었습니다!")
-        return "\n".join(self.cake_description)
+class Cake:
+    def __init__(self, base_type="스폰지", cream_type="바닐라", decoration_type="초콜릿"):
+        self.base = CakeBase(base_type)
+        self.cream = CakeCream(cream_type)
+        self.decoration = CakeDecoration(decoration_type)
+
+    def make_cake(self):
+        cake_description = []
+        cake_description.append(self.base.base)
+        cake_description.append(self.cream.cream)
+        cake_description.append(self.decoration.decoration)
+        cake_description.append("케이크가 완성되었습니다!")
+        
+        return "\n".join(cake_description)
 
 
 # 클라이언트 코드
@@ -46,5 +56,5 @@ print(cake.make_cake())
 
 print("\n다른 종류의 케이크 만들기:")
 
-another_cake = Cake()
-print(another_cake.make_cake("초콜릿", "초콜릿", "과일"))
+another_cake = Cake("초콜릿", "초콜릿", "과일")
+print(another_cake.make_cake())
