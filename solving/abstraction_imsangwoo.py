@@ -1,9 +1,22 @@
 class Cake:
     def __init__(self):
-        self.base = ""
-        self.cream = ""
-        self.decoration = ""
         self.cake_description = []
+
+    def make_cake(self, base_type="스폰지", cream_type="바닐라", decoration_type="초콜릿"):
+        baseCake = Base()
+        cream = Cream()
+        deco = Decoration()
+
+        self.cake_description.append(baseCake.prepare_base(base_type))
+        self.cake_description.append(cream.add_cream(cream_type))
+        self.cake_description.append(deco.decorate(decoration_type))
+        self.cake_description.append("케이크가 완성되었습니다!")
+        return "\n".join(self.cake_description)
+
+
+class Base(Cake):
+    def __init__(self):
+        self.base = ""
 
     def prepare_base(self, base_type="스폰지"):
         if base_type == "스폰지":
@@ -12,8 +25,11 @@ class Cake:
             self.base = "초콜릿 케이크 베이스"
         else:
             self.base = "일반 케이크 베이스"
-        self.cake_description.append(f"{self.base} 준비")
+        return (f"{self.base} 준비")  
 
+class Cream(Cake):
+    def __init__(self):
+        self.cream = ""
     def add_cream(self, cream_type="바닐라"):
         if cream_type == "바닐라":
             self.cream = "바닐라 크림"
@@ -21,8 +37,12 @@ class Cake:
             self.cream = "초콜릿 크림"
         else:
             self.cream = "일반 크림"
-        self.cake_description.append(f"{self.cream} 추가")
+        return (f"{self.cream} 추가")
+ 
 
+class Decoration(Cake):
+    def __init__(self):
+        self.decoration = ""
     def decorate(self, decoration_type="초콜릿"):
         if decoration_type == "초콜릿":
             self.decoration = "초콜릿 장식"
@@ -30,15 +50,7 @@ class Cake:
             self.decoration = "과일 장식"
         else:
             self.decoration = "일반 장식"
-        self.cake_description.append(f"{self.decoration} 추가")
-
-    def make_cake(self, base_type="스폰지", cream_type="바닐라", decoration_type="초콜릿"):
-        self.prepare_base(base_type)
-        self.add_cream(cream_type)
-        self.decorate(decoration_type)
-        self.cake_description.append("케이크가 완성되었습니다!")
-        return "\n".join(self.cake_description)
-
+        return (f"{self.decoration} 추가")
 
 # 클라이언트 코드
 cake = Cake()
