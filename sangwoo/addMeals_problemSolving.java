@@ -85,7 +85,7 @@ private int[] setMealItemTypeIdx(int qty, int mealItemListSize){
 
     try{
          if(qty > mealItemListSize){
-             for(int i=mealItemListSize; i<mealItemTypeIdx.size(); i++){
+             for(int i=mealItemListSize; i<qty; i++){
                   qty[i]=mealItemListSize-1;
             }
         }
