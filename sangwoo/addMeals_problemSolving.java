@@ -49,18 +49,18 @@ protected boolean HashMap addMeals(HashMap orderMap) throws Exception{
                  * qty가 4인 경우가 생겼을때 itemCnt ArrayIndexOutOfBoundsException 발생
                  */
                 if(mealItemList.size() > 0){
-                    int itemCnt[] = setMealItemTypeIdx();
+                    int itemTypeIdx[] = setMealItemTypeIdx(qty, mealItemList.size());
                     String odOrderDetlGrpId ="";
                     for(int k=0; k<qty; k++){
                         //OD_ORDER_DETL GRP_ID 생성
                         if(k ==0){
                             odOrderDetlGrpId = (String)dao.selectOne("subscribeOrderCreate.getOdOrderDetlGrpId");
                         }
-                        else if(itemCnt[k-1] != itemCnt[k]){
+                        else if(itemTypeIdx[k-1] != itemTypeIdx[k]){
                             odOrderDetlGrpId = (String)dao.selectOne("subscribeOrderCreate.getOdOrderDetlGrpId");
                         }
                         HashMap mealItem = new HashMap();
-                        mealItem.putAll(mealItemList.get(itemCnt[k]));
+                        mealItem.putAll(mealItemList.get(itemTypeIdx[k]));
                        //... 
                     }
                 }
@@ -74,13 +74,22 @@ protected boolean HashMap addMeals(HashMap orderMap) throws Exception{
     
     }
 
-    private int[] setMealItemTypeIdx(){
-        int itemCnt[] = {0,1,2};
-        if(mealItemList.size() == 1){
-            itemCnt[1] = 0;
-            itemCnt[2] = 0;
-        } else if(mealItemList.size() == 2){
-            itemCnt[2] = 1;
+//구독주문상품조회 mealList
+//구독주문마켓상품조회, 구독주문식단상품조회 mealItemList 뭔차이?
+//qty는 배송되어야하는 상품 개수, mealItemList.size()는 상품이 몇 종류인지
+//mealItemList.size()는 qty보다 클일이 거의 없다
+private int[] setMealItemTypeIdx(int qty, int mealItemListSize){
+    int[] mealItemTypeIdx = new int[qty];
+    for(int i=0; i<qty; i++) mealItemTypeIdx[i] = i;
+
+    try{
+         if(qty > mealItemListSize){
+             for(int i=mealItemListSize; i<mealItemTypeIdx.size(); i++){
+                  qty[i]=mealItemListSize-1;
+            }
         }
-        return itemCnt;
-    }
+      } catch(ArrayIndexOutOfBoundsException e){
+           e.printStackTrace();
+      }
+      return mealItemTypeIdx;
+}
