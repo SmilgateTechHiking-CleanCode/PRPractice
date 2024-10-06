@@ -5,19 +5,11 @@ export class ProductService {
     private readonly commonSerivce: CommonService,
   ) {}
 
-  async findAll(payload: GetProductListReq) {
-    const size = payload.size ? payload.size : 10;
-    const page = payload.page ? payload.page : 1;
+  async getProductList(payload: GetProductListReq, whereOption: SQL) {
+    const size = payload.size ? payload.size : DEFAULT_SIZE;
+    const page = payload.page ? payload.page : DEFAULT_PAGE;
 
     const offset = (page - 1) * size;
-
-    const totalCountQuery = this.db
-      .select({ count: sql<number>`count(${Product.id})::int` })
-      .from(Product);
-
-    if (payload.categories) {
-      totalCountQuery.leftJoin(Category, eq(Product.category, Category.id));
-    }
 
     const query = this.db
       .select({
@@ -31,8 +23,36 @@ export class ProductService {
       .leftJoin(ProductTags, eq(ProductTags.productId, Product.id))
       .leftJoin(Tag, eq(ProductTags.tagId, Tag.id))
       .leftJoin(ProductImages, eq(ProductImages.productId, Product.id))
-      .leftJoin(Images, eq(ProductImages.images, Images.id));
+      .leftJoin(Images, eq(ProductImages.images, Images.id))
+      .where(whereOption);
 
+    query
+      .orderBy(asc(Product.createdAt))
+      .limit(size)
+      .offset(offset)
+      .groupBy(Product.id, Category.id);
+
+    return query;
+  }
+
+  async getTotalPage(payload: GetProductListReq, whereOption: SQL) {
+    const size = payload.size ? payload.size : DEFAULT_SIZE;
+
+    const query = this.db
+      .select({ count: sql<number>`count(${Product.id})::int` })
+      .from(Product);
+
+    if (payload.categories) {
+      query.leftJoin(Category, eq(Product.category, Category.id));
+    }
+    query.where(whereOption);
+
+    const [totalCountResult] = await query;
+
+    const totalPage = Math.ceil(totalCountResult.count / size);
+    return totalPage;
+  }
+  getwhereOptions(payload: GetProductListReq) {
     const whereOptionsList: SQLWrapper[] = [];
 
     if (payload.keyword) {
@@ -49,24 +69,6 @@ export class ProductService {
       whereOptionsList.length >= 2
         ? and(...whereOptionsList)
         : whereOptionsList[0];
-
-    if (whereOption) {
-      query.where(whereOption as SQL);
-      totalCountQuery.where(whereOption as SQL);
-    }
-
-    query
-      .orderBy(asc(Product.createdAt))
-      .limit(size)
-      .offset(offset)
-      .groupBy(Product.id, Category.id);
-
-    const [result, [totalCountResult]] = await Promise.all([
-      query,
-      totalCountQuery,
-    ]);
-
-    const totalPage = Math.ceil(totalCountResult.count / size);
-    return { result, totalPage };
+    return whereOption as SQL;
   }
 }
