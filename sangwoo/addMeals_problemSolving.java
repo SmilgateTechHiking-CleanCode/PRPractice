@@ -79,7 +79,7 @@ protected boolean HashMap addMeals(HashMap orderMap) throws Exception{
 //구독주문마켓상품조회, 구독주문식단상품조회 mealItemList 뭔차이?
 //qty는 배송되어야하는 상품 개수, mealItemList.size()는 상품이 몇 종류인지
 //mealItemList.size()는 qty보다 클일이 거의 없다
-private int[] setMealItemTypeIdx(){
+private int[] setMealItemTypeIdx(int qty, int mealItemListSize){
     int[] mealItemTypeIdx = new int[qty];
     for(int i=0; i<qty; i++) mealItemTypeIdx[i] = i;
 
