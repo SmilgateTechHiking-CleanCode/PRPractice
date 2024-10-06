@@ -49,14 +49,8 @@ protected boolean HashMap addMeals(HashMap orderMap) throws Exception{
                  * qty가 4인 경우가 생겼을때 itemCnt ArrayIndexOutOfBoundsException 발생
                  */
                 if(mealItemList.size() > 0){
-                    int itemCnt[] = {0,1,2};
+                    int itemCnt[] = setMealItemTypeIdx();
                     String odOrderDetlGrpId ="";
-                    if(mealItemList.size() == 1){
-                        itemCnt[1] = 0;
-                        itemCnt[2] = 0;
-                    } else if(mealItemList.size() == 2){
-                        itemCnt[2] = 1;
-                    }
                     for(int k=0; k<qty; k++){
                         //OD_ORDER_DETL GRP_ID 생성
                         if(k ==0){
@@ -78,4 +72,15 @@ protected boolean HashMap addMeals(HashMap orderMap) throws Exception{
     
     
     
+    }
+
+    private int[] setMealItemTypeIdx(){
+        int itemCnt[] = {0,1,2};
+        if(mealItemList.size() == 1){
+            itemCnt[1] = 0;
+            itemCnt[2] = 0;
+        } else if(mealItemList.size() == 2){
+            itemCnt[2] = 1;
+        }
+        return itemCnt;
     }
