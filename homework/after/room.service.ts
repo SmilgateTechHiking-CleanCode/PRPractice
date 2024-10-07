@@ -37,7 +37,6 @@ export class RoomService {
   }
 
   public addPeerToRoom(roomId: string, peerId: string) {
-    // validation
     const room = this.rooms.get(roomId);
     if (!room) {
       throw new Error(`Room ${roomId} not found`);
